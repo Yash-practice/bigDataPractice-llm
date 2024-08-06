@@ -99,7 +99,8 @@ def create_vector_db(data_path, db_faiss_path):
 
 # Load LLM model
 def load_llm(model_path):
-    llm = CTransformers(model=model_path, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8})
+    model_id = 'TheBloke/Llama-2-7B-Chat-GGML'
+    llm = CTransformers(model=mode_id, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8})
     return llm
 
 # Set custom prompt template
