@@ -68,7 +68,6 @@ with st.sidebar:
     model_folder = 'models/'
     model_files = [f for f in os.listdir(model_folder) if f.endswith('.bin')]
     selected_model = st.selectbox("Choose a Model", model_files, key='select_model')
-    llm_model_path = os.path.join(model_folder, selected_model)
 
     st.subheader("PDF Documents")
     pdf_files = [f for f in os.listdir(domain_path) if f.endswith('.pdf')]
@@ -98,9 +97,9 @@ def create_vector_db(data_path, db_faiss_path):
         return db
 
 # Load LLM model
-def load_llm(model_path):
+def load_llm():
     model_id = 'TheBloke/Llama-2-7B-Chat-GGML'
-    llm = CTransformers(model=mode_id, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8})
+    llm = CTransformers(model=model_id, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8})
     return llm
 
 # Set custom prompt template
@@ -123,9 +122,9 @@ def retrieval_qa_chain(llm, prompt, db):
     return qa_chain
 
 # Initialize the QA bot
-def qa_bot(db_faiss_path, model_path):
+def qa_bot(db_faiss_path):
     db = create_vector_db(domain_path, db_faiss_path)
-    llm = load_llm(model_path)
+    llm = load_llm()
     qa_prompt = set_custom_prompt()
     qa = retrieval_qa_chain(llm, qa_prompt, db)
     return qa
@@ -213,7 +212,7 @@ def generate_response(prompt_input, domain):
         print("Giving answer from database")
         english_response = faq_answer
     else:
-        qa = qa_bot(vectorstore_path, llm_model_path)
+        qa = qa_bot(vectorstore_path)
         response = qa({'query': english_prompt})
         english_response = response["result"]
         # Extract source information
