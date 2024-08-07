@@ -9,13 +9,34 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.llms import CTransformers
 from googletrans import Translator
 import sqlite3
+import streamlit as st
+import torch
+
+# def check_gpu():
+#     if torch.cuda.is_available():
+#         device = torch.device("cuda")
+#         print("CUDA is available. Using GPU.")
+#     else:
+#         device = torch.device("cpu")
+#         print("CUDA is not available. Using CPU.")
+#     device_name = device
+#     print(device_name)
+#     return (device_name)
+
+# device = check_gpu()
+
+# # Example PyTorch computation
+# tensor = torch.tensor([1.0, 2.0, 3.0]).to(device)
+# result = tensor * 2
+# print(result)
+
 
 # Path configurations
 DATA_PATH = 'data/'
 VECTORSTORE_PATH = 'vectorstore/'
 
 # Step 2: Add a title to your Streamlit Application on Browser
-st.set_page_config(page_title="QA Chatbot 🤖")
+st.set_page_config(page_title="QA Chatbot ðŸ¤–")
 
 # Custom CSS for hover tooltip
 st.markdown("""
@@ -54,7 +75,7 @@ st.markdown("""
 
 # Create a Sidebar
 with st.sidebar:
-    st.title("QA Chatbot 🤖")
+    st.title("QA Chatbot ðŸ¤–")
     st.header("Settings")
 
     st.subheader("Domain Selection")
@@ -68,6 +89,7 @@ with st.sidebar:
     model_folder = 'models/'
     model_files = [f for f in os.listdir(model_folder) if f.endswith('.bin')]
     selected_model = st.selectbox("Choose a Model", model_files, key='select_model')
+    llm_model_path = os.path.join(model_folder, selected_model)
 
     st.subheader("PDF Documents")
     pdf_files = [f for f in os.listdir(domain_path) if f.endswith('.pdf')]
@@ -83,7 +105,7 @@ def create_vector_db(data_path, db_faiss_path):
         documents = loader.load()
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         texts = text_splitter.split_documents(documents)
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cpu'})
+        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cuda'})
         print("Created embeddings")
         db = FAISS.from_documents(texts, embeddings)
         print("Saving embeddings")
@@ -91,15 +113,15 @@ def create_vector_db(data_path, db_faiss_path):
         return db
     else:
         # Load the existing vector database
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cpu'})
+        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cuda'})
         print("Searching from already created embeddings")
         db = FAISS.load_local(db_faiss_path, embeddings)
         return db
 
 # Load LLM model
-def load_llm():
-    model_id = 'TheBloke/Llama-2-7B-Chat-GGML'
-    llm = CTransformers(model=model_id, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8})
+def load_llm(model_path):
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    llm = CTransformers(model=model_path, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8}, gpu_layers=50, device=device)
     return llm
 
 # Set custom prompt template
@@ -122,9 +144,9 @@ def retrieval_qa_chain(llm, prompt, db):
     return qa_chain
 
 # Initialize the QA bot
-def qa_bot(db_faiss_path):
+def qa_bot(db_faiss_path, model_path):
     db = create_vector_db(domain_path, db_faiss_path)
-    llm = load_llm()
+    llm = load_llm(model_path)
     qa_prompt = set_custom_prompt()
     qa = retrieval_qa_chain(llm, qa_prompt, db)
     return qa
@@ -212,7 +234,7 @@ def generate_response(prompt_input, domain):
         print("Giving answer from database")
         english_response = faq_answer
     else:
-        qa = qa_bot(vectorstore_path)
+        qa = qa_bot(vectorstore_path, llm_model_path)
         response = qa({'query': english_prompt})
         english_response = response["result"]
         # Extract source information
