@@ -12,24 +12,6 @@ import sqlite3
 import streamlit as st
 import torch
 
-# def check_gpu():
-#     if torch.cuda.is_available():
-#         device = torch.device("cuda")
-#         print("CUDA is available. Using GPU.")
-#     else:
-#         device = torch.device("cpu")
-#         print("CUDA is not available. Using CPU.")
-#     device_name = device
-#     print(device_name)
-#     return (device_name)
-
-# device = check_gpu()
-
-# # Example PyTorch computation
-# tensor = torch.tensor([1.0, 2.0, 3.0]).to(device)
-# result = tensor * 2
-# print(result)
-
 
 # Path configurations
 DATA_PATH = 'data/'
@@ -97,6 +79,9 @@ with st.sidebar:
 
 # Function to create the vector database if it doesn't exist
 def create_vector_db(data_path, db_faiss_path):
+    # Determine if GPU is available
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    
     # Check for the presence of the index file
     index_file = os.path.join(db_faiss_path, 'index.faiss')
     if not os.path.exists(index_file):
@@ -105,22 +90,29 @@ def create_vector_db(data_path, db_faiss_path):
         documents = loader.load()
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         texts = text_splitter.split_documents(documents)
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cuda'})
+        
+        # Use the appropriate device for embeddings
+        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': device})
         print("Created embeddings")
+        
+        # Create and save the vector database
         db = FAISS.from_documents(texts, embeddings)
         print("Saving embeddings")
         db.save_local(db_faiss_path)
         return db
     else:
         # Load the existing vector database
-        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': 'cuda'})
+        embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': device})
         print("Searching from already created embeddings")
         db = FAISS.load_local(db_faiss_path, embeddings)
         return db
 
-# Load LLM model
+# Function to load LLM model
 def load_llm(model_path):
+    # Determine if GPU is available
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    
+    # Load the model with the appropriate device and configuration
     llm = CTransformers(model=model_path, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8}, gpu_layers=50, device=device)
     return llm
 
