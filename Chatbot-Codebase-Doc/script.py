@@ -10,6 +10,7 @@ from langchain.llms import CTransformers
 from googletrans import Translator
 import sqlite3
 import streamlit as st
+import torch
 
 
 # Path configurations
