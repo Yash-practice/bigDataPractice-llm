@@ -4,3 +4,4 @@ sentence-transformers==2.2.2
 streamlit==1.36.0
 googletrans==4.0.0rc1
 faiss-cpu==1.7.4
+torch==2.1.0
