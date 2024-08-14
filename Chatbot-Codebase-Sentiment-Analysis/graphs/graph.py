@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-
+ 
 def plot_gauge(zones, max_value=100, min_value=0):
     # Define the gauge chart
     fig = go.Figure(go.Indicator(
@@ -13,7 +13,7 @@ def plot_gauge(zones, max_value=100, min_value=0):
         ),
         number=dict(font_size=48, suffix=" units")
     ))
-    
+   
     zone_y_axis = 0.5
     # for zone in zones:
     for zone in zones:
@@ -35,13 +35,13 @@ def plot_gauge(zones, max_value=100, min_value=0):
             )
         )
         zone_y_axis -= 0.2
-    
+   
     # Update layout
     fig.update_layout(
         title_text="Sentiment",
         title_x=0.5,
-        width=600,
-        height=400
+        width=400,
+        height=300
     )
-
+ 
     return fig
