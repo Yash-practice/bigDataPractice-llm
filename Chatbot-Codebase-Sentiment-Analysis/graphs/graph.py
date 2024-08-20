@@ -45,3 +45,17 @@ def plot_gauge(zones, max_value=100, min_value=0):
     )
  
     return fig
+
+def barChart(xaxis,yaxis,title,xlabel,ylabel):
+    # Create a bar chart
+    fig = go.Figure(data=[go.Bar(x=xaxis, y=yaxis, marker_color='lightsalmon')])
+
+    # Update layout
+    fig.update_layout(
+        title=title,
+        xaxis_title=xlabel,
+        yaxis_title=ylabel
+    )
+
+    # Show the chart
+    return fig

@@ -75,34 +75,37 @@ def general_search(domain_name):
             sentiment_mapping = model_instance.config.id2label
             sentiment = model.predict_sentiment(user_input, model_instance, tokenizer, sentiment_mapping)
  
-            zones = [{
-                'name': 'Negative',
-                'color': 'red',
-                'range': [0, (sentiment['probs']['negative']) * 100]
-            },
-            {
-                'name': 'Neutral',
-                'color': 'yellow',
-                'range': [(sentiment['probs']['negative']) * 100, (sentiment['probs']['negative'] + sentiment['probs']['neutral']) * 100]
-            },
-            {
-                'name': 'Positive',
-                'color': 'green',
-                'range': [(sentiment['probs']['negative'] + sentiment['probs']['neutral']) * 100, 100]
-            }]
- 
-            # Plot gauge
-            gauge_fig = graph.plot_gauge(zones)
- 
+            # zones = [{
+            #     'name': 'Negative',
+            #     'color': 'red',
+            #     'range': [0, (sentiment['probs']['negative']) * 100]
+            # },
+            # {
+            #     'name': 'Neutral',
+            #     'color': 'yellow',
+            #     'range': [(sentiment['probs']['negative']) * 100, (sentiment['probs']['negative'] + sentiment['probs']['neutral']) * 100]
+            # },
+            # {
+            #     'name': 'Positive',
+            #     'color': 'green',
+            #     'range': [(sentiment['probs']['negative'] + sentiment['probs']['neutral']) * 100, 100]
+            # }]
+            
+            labels = list(sentiment["probs"].keys())
+            scores = [value *100 for value in list(sentiment["probs"].values())]
+            
+            
+            fig = graph.barChart(labels,scores,"Analysis", "Sentiment", "score")
+             
             # Add user input, response, and graph to chat history
             response = f"Response to '{user_input}'"  # Placeholder for actual response
             st.session_state['chat_history'].append({
                 'user': user_input,
                 'response': response,
-                'graph': gauge_fig
+                'graph': fig
             })
  
-            # Display new chat entry
+            # # Display new chat entry
             st.markdown(f'<div class="chat-response">User: {user_input}</div>', unsafe_allow_html=True)
             st.markdown(f'<div class="chat-response">Bot: {response}</div>', unsafe_allow_html=True)
-            st.plotly_chart(gauge_fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)

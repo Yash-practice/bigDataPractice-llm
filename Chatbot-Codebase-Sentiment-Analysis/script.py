@@ -1,4 +1,4 @@
-from constants import domain_constant
+from constants import domain_constant, usecase_constant
 from models import model
 from page import main
 import streamlit as st
@@ -8,7 +8,9 @@ def load_css(file_path):
     with open(file_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-domains = [domain_constant.GENERAL, domain_constant.SOCIAL_MEDIA, domain_constant.CUSTOMER_REVIEW]
+domains = [domain_constant.GENERAL, domain_constant.SOCIAL_MEDIA]
+
+usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER]
  
 if __name__ == "__main__":
     
@@ -23,16 +25,18 @@ if __name__ == "__main__":
         st.error("CSS file not found.")
  
     # Sidebar Configuration
-    st.sidebar.header("Hi Isha! 👋")
+    st.sidebar.header("Hi User! 👋")
     st.sidebar.write("Welcome to your Sentiment Analysis Chatbot dashboard. Customize your settings below:")
  
     # User Profile Settings
-    display_name = st.sidebar.text_input("Display Name", "Isha", disabled=True)
+    display_name = st.sidebar.text_input("Display Name", "Username", disabled=True)
    
-    domain = st.sidebar.selectbox("Select Usecase", domains)
+    usecase = st.sidebar.selectbox("Select Usecase", usecase)
  
+    domain = st.sidebar.radio("Select Analysis Type", domains)
+    
     if domain in model.domain_model:
-        model_name = st.sidebar.radio("Model", model.domain_model[domain])
+        model_name = st.sidebar.text_input('model_name', model.domain_model[domain][0], disabled=True)
  
     # Language Selection
     st.sidebar.header("Language Settings")
@@ -52,5 +56,5 @@ if __name__ == "__main__":
     st.sidebar.header("Help & Documentation")
     if st.sidebar.button("View Help"):
         st.sidebar.write("Help documentation here...")
-        
-    main.page(domain)
+       
+    main.page(usecase,domain)
