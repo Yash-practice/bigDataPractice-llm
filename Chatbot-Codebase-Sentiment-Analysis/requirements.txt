@@ -2,5 +2,5 @@ streamlit == 1.37.1
 torch == 2.4.0
 transformers == 4.42.4
 numpy == 1.26.4
-scipy == 1.14.
+scipy == 1.14.0
 plotly == 5.23.0
