@@ -10,7 +10,7 @@ def load_css(file_path):
 
 domains = [domain_constant.GENERAL, domain_constant.SOCIAL_MEDIA]
 
-usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER]
+usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_constant.AUDIO_ANALYSER,usecase_constant.EMAIL_ANALYSER]
  
 if __name__ == "__main__":
     

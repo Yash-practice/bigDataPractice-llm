@@ -8,31 +8,7 @@ def general_search(domain_name):
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
     st.markdown("""
-    <div class="slider-container">
-        <div class="slider">
-            <div>😇</div>
-            <div>😠</div>
-            <div>😢</div>
-            <div>😊</div>
-            <div>😃</div>
-            <div>😎</div>
-            <div>😴</div>
-            <div>😮</div>
-            <div>🙁</div>
-            <div>😇</div>
-            <div>😛</div>
-            <div>😠</div> <!-- Repeat emojis to create a seamless loop -->
-            <div>😢</div>
-            <div>😊</div>
-            <div>😃</div>
-            <div>😎</div>
-            <div>😴</div>
-            <div>😮</div>
-            <div>🙁</div>
-            <div>😇</div>
-            <div>😛</div>
-        </div>
-    </div>
+    
     <div style='text-align: left; margin-left: 60px; margin-bottom: 0px'>
         <h3>Welcome to the Sentiment Analysis Chatbot 🤖</h3>
     </div>
