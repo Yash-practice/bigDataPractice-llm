@@ -1,11 +1,11 @@
-from constants import domain_constant, model_constant
+from constants import analysis_type_constant, model_constant
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import numpy as np
 from scipy.special import softmax
 
 domain_model = {
-    domain_constant.GENERAL: [model_constant.TWITTER_ROBERTA_BASE_SENTIMENT_LATEST],
-    domain_constant.SOCIAL_MEDIA: [model_constant.ROBERTA_BASE_GO_EMOTIONS]
+    analysis_type_constant.GENERAL: [model_constant.TWITTER_ROBERTA_BASE_SENTIMENT_LATEST],
+    analysis_type_constant.SOCIAL_MEDIA: [model_constant.ROBERTA_BASE_GO_EMOTIONS]
 }
 
 def load_roberta_model(model, tokenizer):

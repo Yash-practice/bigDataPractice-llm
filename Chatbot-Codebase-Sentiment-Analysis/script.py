@@ -1,4 +1,4 @@
-from constants import domain_constant, usecase_constant
+from constants import analysis_type_constant, usecase_constant
 from models import model
 from page import main
 import streamlit as st
@@ -8,7 +8,7 @@ def load_css(file_path):
     with open(file_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-domains = [domain_constant.GENERAL, domain_constant.SOCIAL_MEDIA]
+domains = [analysis_type_constant.GENERAL, analysis_type_constant.SOCIAL_MEDIA]
 
 usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER]
  
@@ -34,6 +34,8 @@ if __name__ == "__main__":
     usecase = st.sidebar.selectbox("Select Usecase", usecase)
  
     domain = st.sidebar.radio("Select Analysis Type", domains)
+    
+    st.sidebar.checkbox("Keyword Based Analysis", key="Keyword_Analysis")
     
     if domain in model.domain_model:
         model_name = st.sidebar.text_input('model_name', model.domain_model[domain][0], disabled=True)

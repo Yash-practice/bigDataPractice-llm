@@ -17,7 +17,7 @@ def load_data(file):
     df = pd.read_csv(file, header=0, encoding='ISO-8859-1', on_bad_lines='skip', nrows=100)
     return df
  
-def social_media_analysis(domain_name):
+def dataset_analysis(domain_name):
         
     tab1, tab2 = st.tabs(["Upload Dataset", "Show Report"])
     with tab2:
