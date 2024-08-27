@@ -2,34 +2,7 @@ import streamlit as st
 from models import model
 from module.keywords import keywords
 from module.Sentence_Extraction import Sentence_Extractor
-import random
-
-js_code = """
-<script>
-function callFunction(function_id) {
-    // Send a message to Streamlit
-    const streamlit = window.parent;
-    streamlit._onMessage('function_call', function_id);
-}
-</script>
-"""
-
-def random_color():
-    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
-
-def color_brightness(hex_color):
-    rgb = [int(hex_color[i:i+2], 16) for i in (1, 3, 5)]
-    return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000
-
-def is_valid_color(hex_color):
-    brightness = color_brightness(hex_color)
-    return 30 < brightness < 230  # Filter out very dark and very light colors
-
-def get_valid_random_color():
-    while True:
-        color = random_color()
-        if is_valid_color(color):
-            return color
+from module.randomized_color import randomized_colors
 
 def onChangeAllKeywords():
     if st.session_state['All_Keywords']:
@@ -53,6 +26,10 @@ def general_search(domain_name):
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
     st.markdown("""
+    
+    <div style='text-align: left; margin-left: 60px; margin-bottom: 0px'>
+        <h3>Welcome to the Sentiment Analysis Chatbot 🤖</h3>
+    </div>
     <div class="slider-container">
         <div class="slider">
             <div>😇</div>
@@ -106,7 +83,7 @@ def general_search(domain_name):
                 placeholder.markdown(highlighted_text, unsafe_allow_html=True)
                 st.write(response)
                 chosen_topics = st.multiselect('Select Topics To Analyse', topics_keywords)
-                chosen_topics = [[chosen_topic,get_valid_random_color()] for chosen_topic in chosen_topics]
+                chosen_topics = [[chosen_topic,randomized_colors.get_valid_random_color()] for chosen_topic in chosen_topics]
                 if len(chosen_topics)>0:
                     relevant_texts = Sentence_Extractor.extract_relevant_text(user_input, chosen_topics)
                     colored_sentences = []

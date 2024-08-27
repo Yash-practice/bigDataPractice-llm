@@ -10,7 +10,7 @@ def load_css(file_path):
 
 domains = [analysis_type_constant.GENERAL, analysis_type_constant.SOCIAL_MEDIA]
 
-usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER]
+usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_constant.AUDIO_ANALYSER,usecase_constant.EMAIL_ANALYSER]
  
 if __name__ == "__main__":
     
@@ -35,7 +35,10 @@ if __name__ == "__main__":
  
     domain = st.sidebar.radio("Select Analysis Type", domains)
     
-    st.sidebar.checkbox("Keyword Based Analysis", key="Keyword_Analysis")
+    disablekeywordbasedcheckbox = False
+    if usecase!=usecase_constant.CHATBOT:
+        disablekeywordbasedcheckbox = True
+    st.sidebar.checkbox("Keyword Based Analysis", key="Keyword_Analysis", disabled=disablekeywordbasedcheckbox)
     
     if domain in model.domain_model:
         model_name = st.sidebar.text_input('model_name', model.domain_model[domain][0], disabled=True)
