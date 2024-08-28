@@ -1,0 +1,21 @@
+1- clone the repo and go to sentiment analysis branch
+	open gitbash
+
+	cmd-> git clone https://github.com/Yash-practice/bigDataPractice-llm.git
+      	      git checkout sentiment_analysis
+      
+
+2- unzip the models and put it inside bigDataPractice-llm\Chatbot-Codebase-Sentiment-Analysis\models
+	
+	1 - roberta-base-go_emotions
+	2 - twitter-roberta-base-sentiment-latest
+
+3 -install requirement.txt go to this path bigDataPractice-llm\Chatbot-Codebase-Sentiment-Analysis\
+
+	open command prompt
+	cmd -> pip install -r requirements.txt
+
+4 - run streamlit application:
+
+	open command prompt go to this path bigDataPractice-llm\Chatbot-Codebase-Sentiment-Analysis
+	cmd -> streamlit run script.py
