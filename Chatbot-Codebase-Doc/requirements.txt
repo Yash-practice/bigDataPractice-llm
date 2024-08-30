@@ -3,5 +3,7 @@ ctransformers==0.2.5
 sentence-transformers==2.2.2
 streamlit == 1.36.0
 googletrans == 4.0.0rc1
-faiss-cpu == 1.7.4
+faiss-cpu
 ctransformers[cuda]
+googletrans==4.0.0rc1
+torch==2.2.0
