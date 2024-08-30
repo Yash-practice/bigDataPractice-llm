@@ -70,10 +70,11 @@ def dataset_analysis(domain_name):
                         pagination.dataframe(data=pages[current_page - 1], use_container_width=True)
         
                         csv = convert_df(st.session_state.analysed_df)
+                        updated_file = "".join(uploaded_file.name.split(".")[:-1])
                         st.download_button(
                             "Download",
                             csv,
-                            f"{"".join(uploaded_file.name.split(".")[:-1])}-Analyzed.csv",
+                            f"{updated_file}-Analyzed.csv",
                             "text/csv",
                             key='download-csv'
                         )
