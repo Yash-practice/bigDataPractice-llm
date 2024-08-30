@@ -12,7 +12,7 @@ ls -lrt
 
 python3 -m pip install -r requirements.txt
 python3 -m spacy download en_core_web_sm
-python3 -m streamlit run script.py --server.port 8502 > streamlit_output.log 2>&1
+nohup python3 -m streamlit run script.py --server.port 8502 > streamlit_output.log 2>&1 &
 
 
 # Print the completion time
