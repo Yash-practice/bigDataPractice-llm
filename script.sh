@@ -8,13 +8,8 @@ mkdir -p "Doc_Chatbot"
 cd "Doc_Chatbot"
 REPO_URL="https://github.com/Yash-practice/bigDataPractice-llm.git"
 TARGET_DIR="bigDataPractice-llm"
-# Check if the target directory exists
-if [ -d "$TARGET_DIR" ]; then
-  echo "Directory $TARGET_DIR already exists. Skipping clone."
-else
-  echo "Directory $TARGET_DIR does not exist. Cloning repository."
-  git clone "$REPO_URL" "$TARGET_DIR"
-fi
+rm -r "$TARGET_DIR"
+git clone "$REPO_URL" "$TARGET_DIR"
 cd "$TARGET_DIR"
 # Fetch updates from the repository
 git fetch

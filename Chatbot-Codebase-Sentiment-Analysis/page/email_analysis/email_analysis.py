@@ -33,7 +33,7 @@ def main(domain_name=""):
             
             # Load sentiment analysis model
             model_name = model.domain_model[domain_name][0]
-            tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
+            tokenizer, model_instance = model.load_roberta_model(f'{model_name}/model', f'{model_name}/tokenizer')
             sentiment_mapping = model_instance.config.id2label
             
             # Perform sentiment analysis

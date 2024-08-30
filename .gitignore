@@ -1,6 +1,3 @@
-Chatbot-Codebase-Sentiment-Analysis/constants/__pycache__
-Chatbot-Codebase-Sentiment-Analysis/graphs/__pycache__
-Chatbot-Codebase-Sentiment-Analysis/models/__pycache__
-Chatbot-Codebase-Sentiment-Analysis/models/roberta-base-go_emotions
-Chatbot-Codebase-Sentiment-Analysis/models/twitter-roberta-base-sentiment-latest
+Chatbot-Codebase-Sentiment-Analysis/**/__pycache__
 Chatbot-Codebase-Sentiment-Analysis/Sentiment_Analysis_env
+models_store/**

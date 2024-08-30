@@ -6,10 +6,12 @@ echo "Starting script at $(date)"
 # gcloud compute ssh vm-genai-llm --zone=us-central1-a
 pwd
 ls -lrt
-cd Medical_Chatbot_Llama2_Pinecone/
+cd /root/Doc_Chatbot/bigDataPractice-llm/Chatbot-Codebase-Sentiment-Analysis/
 pwd
 ls -lrt
 
+python3 -m pip install -r requirements.txt
+python3 -m spacy download en_core_web_sm
 python3 -m streamlit run script.py --server.port 8501 > streamlit_output.log 2>&1
 
 
