@@ -7,7 +7,7 @@ echo "Starting script at $(date)"
 PORT=8502
 
 # Find the PID of the process using the specified port
-PID=$(lsof -ti :$PORT)
+PIDS=$(ps -ef | grep '[s]treamlit' | awk '{print $2}')
 
 # If no PID is found, exit with a message
 if [ -z "$PID" ]; then
