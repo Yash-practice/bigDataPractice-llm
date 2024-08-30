@@ -9,18 +9,20 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.llms import CTransformers
 from googletrans import Translator
 import sqlite3
-import streamlit as st
 import torch
+import speech_recognition as sr
+import pyttsx3
 
 
 # Path configurations
 DATA_PATH = 'data/'
 VECTORSTORE_PATH = 'vectorstore/'
 
-# Step 2: Add a title to your Streamlit Application on Browser
-st.set_page_config(page_title="QA Chatbot ðŸ¤–")
 
-# Custom CSS for hover tooltip
+# Step 2: Add a title to your Streamlit Application on Browser
+st.set_page_config(page_title="QA Chatbot 🤖")
+
+    # Custom CSS for hover tooltip
 st.markdown("""
     <style>
     .tooltip {
@@ -55,33 +57,94 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Create a Sidebar
+# Language selection at the top
+if 'preferred_language' not in st.session_state:
+    st.session_state.preferred_language = 'English'  # Default to English
+
+st.sidebar.title("Language Selection")
+st.sidebar.subheader("Choose your preferred language:")
+selected_language = st.sidebar.selectbox("Language", ['English', 'Arabic', 'French', 'German'], key='select_language')
+st.session_state.preferred_language = selected_language
+
+# Use the selected language for the rest of the app
+translator = Translator()
+
+def translate_text(text, dest_language):
+    if dest_language == 'Arabic':
+        translation = translator.translate(text, dest='ar').text
+    elif dest_language == 'French':
+        translation = translator.translate(text, dest='fr').text
+    elif dest_language == 'German':
+        translation = translator.translate(text, dest='de').text
+    else:
+        translation = text
+    return translation
+
+# After language selection, display the main content
+st.title(translate_text("Welcome to the QA Chatbot 🤖", st.session_state.preferred_language))
+
+# Sidebar layout with inline buttons
 with st.sidebar:
-    st.title("QA Chatbot ðŸ¤–")
+    st.title("QA Chatbot 🤖")
     st.header("Settings")
 
-    st.subheader("Domain Selection")
-    domain = st.selectbox("Choose a Domain", ['Medical', 'KSA', 'Legal'], key='select_domain')
+    # Create two columns for inline buttons
+    col1, col2 = st.columns(2)
 
-    # Update paths based on domain selection
-    domain_path = os.path.join(DATA_PATH, domain)
-    vectorstore_path = os.path.join(VECTORSTORE_PATH, f'db_faiss_{domain}')
+    # Initialize session state variables to control which dropdown to show
+    if 'show_documents' not in st.session_state:
+        st.session_state.show_documents = True
+    if 'selected_domain' not in st.session_state:
+        st.session_state.selected_domain = None
+    if 'llm_model_path' not in st.session_state:
+        st.session_state.llm_model_path = None
 
-    st.subheader("Models and Parameters")
-    model_folder = 'models/'
-    model_files = [f for f in os.listdir(model_folder) if f.endswith('.bin')]
-    selected_model = st.selectbox("Choose a Model", model_files, key='select_model')
-    llm_model_path = os.path.join(model_folder, selected_model)
+    # Button to toggle document and PDF dropdown
+    with col1:
+        if st.button("Documents & PDFs"):
+            st.session_state.show_documents = True
 
-    st.subheader("PDF Documents")
-    pdf_files = [f for f in os.listdir(domain_path) if f.endswith('.pdf')]
-    selected_pdf = st.selectbox("Choose a PDF Document", pdf_files, key='select_pdf')
+    # Button to toggle models and parameters dropdown
+    with col2:
+        if st.button("Models & Parameters"):
+            st.session_state.show_documents = False
+
+    # Conditionally render the appropriate section
+    if st.session_state.show_documents:
+        st.subheader("Domain Selection")
+        domain = st.selectbox("Choose a Domain", ['Medical', 'KSA', 'Legal', 'RFP'], key='select_domain')
+        st.session_state.selected_domain = domain  # Save selected domain to session state
+
+        # Update paths based on domain selection
+        domain_path = os.path.join(DATA_PATH, domain)
+        st.session_state.domain_path = domain_path
+        vectorstore_path = os.path.join(VECTORSTORE_PATH, f'db_faiss_{domain}')
+        st.session_state.vectorstore_path = vectorstore_path
+
+        st.subheader("PDF Documents")
+        pdf_files = [f for f in os.listdir(domain_path) if f.endswith('.pdf')]
+        selected_pdf = st.selectbox("Choose a PDF Document", pdf_files, key='select_pdf')
+        st.session_state.selected_pdf = selected_pdf  # Save selected PDF to session state
+    else:
+        # Display the selected domain and PDF from the session state
+        st.subheader(f"Domain: {st.session_state.get('selected_domain', 'Not Selected')}")
+
+        st.subheader("Models and Parameters")
+        model_folder = 'models/'
+        model_files = [f for f in os.listdir(model_folder) if f.endswith('.bin')]
+        selected_model = st.selectbox("Choose a Model", model_files, key='select_model')
+        llm_model_path = os.path.join(model_folder, selected_model)
+        st.session_state.llm_model_path = llm_model_path
+
+        temperature = st.slider('temperature', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
+        top_p = st.slider('top_p', min_value=0.01, max_value=1.0, value=0.9, step=0.01)
+        max_length = st.slider('max_length', min_value=64, max_value=4096, value=512, step=8)
 
 # Function to create the vector database if it doesn't exist
 def create_vector_db(data_path, db_faiss_path):
     # Determine if GPU is available
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    
+
     # Check for the presence of the index file
     index_file = os.path.join(db_faiss_path, 'index.faiss')
     if not os.path.exists(index_file):
@@ -90,13 +153,12 @@ def create_vector_db(data_path, db_faiss_path):
         documents = loader.load()
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         texts = text_splitter.split_documents(documents)
-        
-        # Use the appropriate device for embeddings
+
         embeddings = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2', model_kwargs={'device': device})
+
         print("Created embeddings")
-        
-        # Create and save the vector database
         db = FAISS.from_documents(texts, embeddings)
+
         print("Saving embeddings")
         db.save_local(db_faiss_path)
         return db
@@ -107,7 +169,7 @@ def create_vector_db(data_path, db_faiss_path):
         db = FAISS.load_local(db_faiss_path, embeddings)
         return db
 
-# Function to load LLM model
+# Load LLM model
 def load_llm(model_path):
     # Determine if GPU is available
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -116,6 +178,7 @@ def load_llm(model_path):
     llm = CTransformers(model=model_path, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.8}, gpu_layers=50, device=device)
     return llm
 
+# Set custom prompt template
 # Set custom prompt template
 def set_custom_prompt():
     custom_prompt_template = """Use the following pieces of information to answer the user's question.
@@ -137,6 +200,7 @@ def retrieval_qa_chain(llm, prompt, db):
 
 # Initialize the QA bot
 def qa_bot(db_faiss_path, model_path):
+    domain_path = st.session_state.domain_path
     db = create_vector_db(domain_path, db_faiss_path)
     llm = load_llm(model_path)
     qa_prompt = set_custom_prompt()
@@ -155,6 +219,31 @@ def translate_english_to_arabic(text):
     print("Translating english_to_arabic")
     translation = translator.translate(text, src='en', dest='ar')
     return translation.text
+
+
+# Function for speech-to-text
+def record_audio():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        st.write("Recording...")
+        audio = recognizer.listen(source)
+        st.write("Processing...")
+        try:
+            text = recognizer.recognize_google(audio)
+            st.write(f"You said: {text}")
+            return text
+        except sr.UnknownValueError:
+            st.write("Sorry, I did not understand that.")
+            return ""
+        except sr.RequestError:
+            st.write("Sorry, there was an error connecting to the speech recognition service.")
+            return ""
+
+# Function for text-to-speech
+def speak_text(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 
 # FAQ Database functions
 def connect_faq_db():
@@ -176,8 +265,12 @@ def get_answer_from_database(cursor, question):
 faq_conn, faq_cursor = connect_faq_db()
 
 # Store the LLM Generated Response
+# if "messages" not in st.session_state.keys():
+#     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+    initial_message = translate_text("How may I assist you today?", st.session_state.preferred_language)
+    st.session_state.messages = [{"role": "assistant", "content": initial_message}]
 
 # Function to create tooltip HTML for message
 def create_tooltip(message, translation):
@@ -206,8 +299,28 @@ def clear_chat_history():
 
 st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
+# Buttons for voice features
+if st.button("🎙️"):
+    user_input = record_audio()
+    if user_input:
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+if st.button("🔊"):
+    if st.session_state.messages:
+        response_text = st.session_state.messages[-1]["content"]
+        speak_text(response_text)
+
 # Function to generate the response using the LLM and FAISS
 def generate_response(prompt_input, domain):
+
+    domain = st.session_state.get('selected_domain')
+    llm_model_path = st.session_state.get('llm_model_path')
+    
+    if domain is None or llm_model_path is None:
+        st.error("Please select both a domain and a model.")
+        return None, None, None
+    
+    
     # Detect the language of the input text
     translator = Translator()
     detected_lang = translator.detect(prompt_input).lang
@@ -226,6 +339,7 @@ def generate_response(prompt_input, domain):
         print("Giving answer from database")
         english_response = faq_answer
     else:
+        vectorstore_path = st.session_state.vectorstore_path
         qa = qa_bot(vectorstore_path, llm_model_path)
         response = qa({'query': english_prompt})
         english_response = response["result"]
@@ -253,6 +367,7 @@ if prompt := st.chat_input():
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
+            domain = st.session_state.selected_domain
             arabic_response, english_response, source_info = generate_response(st.session_state.messages[-1]["content"], domain)
             
             if domain == 'KSA':
