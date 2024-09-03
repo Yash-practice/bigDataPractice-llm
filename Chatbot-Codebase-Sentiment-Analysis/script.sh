@@ -7,19 +7,19 @@ echo "Starting script at $(date)"
 PORT=8502
 
 # Find the PID of the process using the specified port
-PIDS=$(ps -ef | grep '[s]treamlit' | awk '{print $2}')
+PID = $(ps -ef | grep '[s]treamlit' | awk '{print $2}')
 
-# If no PID is found, exit with a message
+echo "PID is $PID"
+# Check if no PID is found
 if [ -z "$PID" ]; then
   echo "No process found using port $PORT."
-  exit 0
+else
+  # Kill the process
+  kill -9 "$PID"
+
+  # Print confirmation
+  echo "Killed process $PID using port $PORT."
 fi
-
-# Kill the process
-kill -9 $PID
-
-# Print confirmation
-echo "Killed process $PID using port $PORT."
 
 # sudo su
 # gcloud compute ssh vm-genai-llm --zone=us-central1-a
