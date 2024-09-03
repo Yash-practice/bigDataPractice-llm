@@ -11,7 +11,7 @@ PROCESS=`ps -ef | grep streamlit | grep 8502`
 
 echo $PROCESS
 
-PIID=$PD|awk '{print $2}'
+PIID=$PROCESS|awk '{print $2}'
 
 echo "PIID is $PIID"
 
