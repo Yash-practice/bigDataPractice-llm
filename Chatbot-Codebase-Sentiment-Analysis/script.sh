@@ -8,6 +8,9 @@ PORT=8502
 
 # Find the PID of the process using the specified port
 PROCESS=`ps -ef | grep streamlit | grep 8502`
+
+echo $PROCESS
+
 PIID=$PD|awk '{print $2}'
 
 echo "PIID is $PIID"
