@@ -7,18 +7,20 @@ echo "Starting script at $(date)"
 PORT=8502
 
 # Find the PID of the process using the specified port
-PID = $(ps -ef | grep '[s]treamlit' | awk '{print $2}')
+PROCESS=`ps -ef | grep streamlit | grep 8502`
+PIID=$PD|awk '{print $2}'
 
-echo "PID is $PID"
-# Check if no PID is found
-if [ -z "$PID" ]; then
+echo "PIID is $PIID"
+
+# Check if no PIID is found
+if [ -z "$PIID" ]; then
   echo "No process found using port $PORT."
 else
   # Kill the process
-  kill -9 "$PID"
+  kill -9 "$PIID"
 
   # Print confirmation
-  echo "Killed process $PID using port $PORT."
+  echo "Killed process $PIID using port $PORT."
 fi
 
 # sudo su
