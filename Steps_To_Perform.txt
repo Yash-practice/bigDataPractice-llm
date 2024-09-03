@@ -2,8 +2,7 @@
 	open gitbash
 
 	cmd-> git clone https://github.com/Yash-practice/bigDataPractice-llm.git
-      	      git checkout sentiment_analysis
-      
+      	      git checkout sentiment_analysis   
 2- unzip the models and put it inside bigDataPractice-llm\Chatbot-Codebase-Sentiment-Analysis\models
 	
 	1 - roberta-base-go_emotions
