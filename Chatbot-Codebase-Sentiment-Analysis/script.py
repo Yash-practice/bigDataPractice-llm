@@ -1,4 +1,5 @@
 from constants import analysis_type_constant, usecase_constant
+from streamlit_navigation_bar import st_navbar
 from models import model
 from page import main
 import streamlit as st
@@ -7,7 +8,7 @@ import os
 def load_css(file_path):
     with open(file_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+        
 domains = [analysis_type_constant.GENERAL, analysis_type_constant.SOCIAL_MEDIA]
 
 usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_constant.AUDIO_ANALYSER,usecase_constant.EMAIL_ANALYSER]
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         load_css(css_file)
     else:
         st.error("CSS file not found.")
- 
+         
     # Sidebar Configuration
     st.sidebar.header("Hi User! 👋")
     st.sidebar.write("Welcome to your Sentiment Analysis Chatbot dashboard. Customize your settings below:")
