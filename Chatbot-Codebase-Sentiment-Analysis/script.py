@@ -1,5 +1,4 @@
 from constants import analysis_type_constant, usecase_constant
-from streamlit_navigation_bar import st_navbar
 from models import model
 from page import main
 import streamlit as st

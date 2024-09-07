@@ -125,7 +125,8 @@ def main(domain_name):
             if chat["data_type"]=="Audio":
                 st.markdown(f"**Transcription:** {chat['value']}")
                 st.markdown(f"**Sentiment:** {chat['response']}")
-                st.markdown(f"**Topics:** {",".join(chat['keywords'])}")
+                commaseptopics = ",".join(chat['keywords'])
+                st.markdown(f"**Topics:** {commaseptopics}")
                 st.markdown('<hr>', unsafe_allow_html=True)
 
 if __name__ == "__main__":

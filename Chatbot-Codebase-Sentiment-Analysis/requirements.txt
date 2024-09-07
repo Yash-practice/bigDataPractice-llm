@@ -9,3 +9,5 @@ SpeechRecognition==3.10.4
 spacy==3.7.6
 nltk==3.9.1
 rake_nltk==1.0.6
+langchain_text_splitters==0.2.2
+openai-whisper==20231117
