@@ -30,31 +30,6 @@ def general_search(domain_name):
     <div style='text-align: left; margin-left: 60px; margin-bottom: 0px'>
         <h3>Welcome to the Sentiment Analysis Chatbot 🤖</h3>
     </div>
-    <div class="slider-container">
-        <div class="slider">
-            <div>😇</div>
-            <div>😠</div>
-            <div>😢</div>
-            <div>😊</div>
-            <div>😃</div>
-            <div>😎</div>
-            <div>😴</div>
-            <div>😮</div>
-            <div>🙁</div>
-            <div>😇</div>
-            <div>😛</div>
-            <div>😠</div>
-            <div>😢</div>
-            <div>😊</div>
-            <div>😃</div>
-            <div>😎</div>
-            <div>😴</div>
-            <div>😮</div>
-            <div>🙁</div>
-            <div>😇</div>
-            <div>😛</div>
-        </div>
-    </div>
     <div style='text-align: left; margin-left: 60px;margin-bottom: 0px; padding-bottom: 0px;'>
     <h6 class='animated-heading'>🕵️ How may I assist you today?</h6>
     </div>
