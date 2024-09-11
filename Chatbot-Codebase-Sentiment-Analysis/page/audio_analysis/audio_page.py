@@ -132,7 +132,7 @@ def main(domain_name):
             results_df = pd.DataFrame(results)
 
             # Create a column layout for the button and the table
-            col1, col2 = st.columns([1, 12])
+            col1, col2 = st.columns([1, 4])
             with col1:
                 st.write("")  # Placeholder for alignment
 
