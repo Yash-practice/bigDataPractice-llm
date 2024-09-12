@@ -2,4 +2,6 @@ Chatbot-Codebase-Doc/myenv
 
 Chatbot-Codebase-Doc/models/*
 
+Chatbot-Codebase-Doc/.env
+
 !Chatbot-Codebase-Doc/models/script.txt
