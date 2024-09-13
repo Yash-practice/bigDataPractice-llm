@@ -46,8 +46,8 @@ def main(domain_name=""):
             sentiment = model.predict_sentiment(email_body, model_instance, tokenizer, sentiment_mapping)
             
             categorized_sentiment = sentiment['output']
-            response = f"{categorized_sentiment} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%"
-            st.write("Sentiment Analysis:")
+            response = f"{categorized_sentiment} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%"
+            st.write(f"{model.domain_model[domain_name][1]} Analysis:")
             st.write(response)
 
             # Extract topics from the email body
@@ -78,7 +78,7 @@ def main(domain_name=""):
                     for sentence in sentences:
                         st.write(sentence)
                         sentiment = model.predict_sentiment(sentence, model_instance, tokenizer, sentiment_mapping)
-                        st.write(f"Sentiment : {sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
+                        st.write(f"{model.domain_model[domain_name][1]} : {sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
         
             json_chat = {
                 "data_type": "Email",

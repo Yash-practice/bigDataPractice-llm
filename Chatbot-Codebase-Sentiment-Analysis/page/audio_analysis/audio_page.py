@@ -68,8 +68,8 @@ def main(domain_name):
             sentiment = model.predict_sentiment(text, model_instance, tokenizer, sentiment_mapping)
             
             categorized_sentiment = sentiment['output']
-            st.write("Sentiment Analysis:")
-            response = f"{categorized_sentiment} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}"
+            st.write(f"{model.domain_model[domain_name][1]} Analysis:")
+            response = f"{categorized_sentiment} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}"
             st.write(response)
             # Extract topics from the transcription
             topics = keywords.keywords_extractor(text)
@@ -99,7 +99,7 @@ def main(domain_name):
                     for sentence in sentences:
                         st.write(sentence)
                         sentiment = model.predict_sentiment(sentence, model_instance, tokenizer, sentiment_mapping)
-                        st.write(f"Sentiment : {sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
+                        st.write(f"{model.domain_model[domain_name][1]} : {sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
             
             json_chat = {
                 "data_type": "Audio",
@@ -124,7 +124,7 @@ def main(domain_name):
         for chat in reversed(chat_history):
             if chat["data_type"]=="Audio":
                 st.markdown(f"**Transcription:** {chat['value']}")
-                st.markdown(f"**Sentiment:** {chat['response']}")
+                st.markdown(f"**Output:** {chat['response']}")
                 commaseptopics = ",".join(chat['keywords'])
                 st.markdown(f"**Topics:** {commaseptopics}")
                 st.markdown('<hr>', unsafe_allow_html=True)

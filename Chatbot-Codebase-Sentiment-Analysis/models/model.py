@@ -3,10 +3,13 @@ from transformers import RobertaTokenizer, RobertaForSequenceClassification
 from langchain_text_splitters import CharacterTextSplitter
 import numpy as np
 from scipy.special import softmax
+from sentence_transformers import SentenceTransformer
+import streamlit as st
+
 
 domain_model = {
-    analysis_type_constant.GENERAL: [model_constant.TWITTER_ROBERTA_BASE_SENTIMENT_LATEST],
-    analysis_type_constant.SOCIAL_MEDIA: [model_constant.ROBERTA_BASE_GO_EMOTIONS]
+    analysis_type_constant.GENERAL: [model_constant.TWITTER_ROBERTA_BASE_SENTIMENT_LATEST,"Sentiment"],
+    analysis_type_constant.SOCIAL_MEDIA: [model_constant.ROBERTA_BASE_GO_EMOTIONS,"Emotion"]
 }
 
 def load_roberta_model(model, tokenizer):
@@ -43,3 +46,11 @@ def predict_sentiment(text, model, tokenizer, sentiment_mapping):
         'output' : sentiment,
         'probs' : probs
     }
+
+@st.cache_data(show_spinner=False)  
+def load_minilm_embedding_model():
+    embedding_model = SentenceTransformer("models/all-MiniLM-L6-v2")
+    return embedding_model
+    
+def encode_text(embedding_model,text):
+    return embedding_model.encode(text)

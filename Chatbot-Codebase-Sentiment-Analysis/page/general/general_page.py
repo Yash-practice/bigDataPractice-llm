@@ -52,7 +52,7 @@ def general_search(domain_name):
                 tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
                 sentiment_mapping = model_instance.config.id2label
                 sentiment = model.predict_sentiment(user_input, model_instance, tokenizer, sentiment_mapping)
-                response = f"{sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%" 
+                response = f"{sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%" 
                 topics_keywords = []
                 if st.session_state['Keyword_Analysis']:
                     topics_keywords = keywords.keywords_extractor(user_input)
@@ -76,11 +76,11 @@ def general_search(domain_name):
                             for sentence in sentences:
                                 st.write(sentence)
                                 sentiment = model.predict_sentiment(sentence, model_instance, tokenizer, sentiment_mapping)
-                                st.write(f"Sentiment : {sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
+                                st.write(f"{model.domain_model[domain_name][1]} : {sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
                                 
                 else:
                     sentiment = model.predict_sentiment(user_input, model_instance, tokenizer, sentiment_mapping)               
-                    response = f"{sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%"  # Placeholder for actual response
+                    response = f"{sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%"  # Placeholder for actual response
                     st.write(user_input)
                     st.markdown(f'<h6>-------  Sentiment  ---------</h6>', unsafe_allow_html=True)
                     st.write(response)
