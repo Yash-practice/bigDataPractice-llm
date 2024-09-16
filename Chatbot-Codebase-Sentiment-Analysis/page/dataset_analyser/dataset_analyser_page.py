@@ -197,10 +197,11 @@ def dataset_analysis(domain_name):
                         with st.container(height=330,border=True):
                             if 'user_query' in st.session_state:
                                 st.markdown(f'<div class="chat-response">User: {st.session_state["user_query"]}</div>', unsafe_allow_html=True) 
-                                if st.session_state["user_query"]:
+                                if st.session_state["user_query"] and 'qa_chain' in st.session_state:
                                     with st.spinner('Asking....'):
                                         response = st.session_state['qa_chain'].invoke({'query': st.session_state["user_query"]})
-                                        st.markdown(f'<div class="chat-response">Bot: {response['result']}</div>', unsafe_allow_html=True)
+                                        result = response['result']
+                                        st.markdown(f'<div class="chat-response">Bot: {result}</div>', unsafe_allow_html=True)
                     elif 'rag_type' in st.session_state and st.session_state['rag_type']=="Analyse Question":
                         with st.container(height=230,border=True):
                             col1,col2 = st.columns([3,2])
@@ -221,7 +222,7 @@ def dataset_analysis(domain_name):
                                 filtered_indices = I[0][D[0] <= distance_threshold]
                                 filtered_df = st.session_state['extended_df'][st.session_state['extended_df'].index.isin(filtered_indices)]
                                 ordered_filtered_df = filtered_df.loc[filtered_indices]
-                                formatted_df = '\n'.join(f'{i + 1} - {value}\n' for i, value in enumerate(ordered_filtered_df.tail(5)[st.session_state["review_text_column"]]))
+                                formatted_df = '\n'.join(f'{i + 1} - {value}\n' for i, value in enumerate(ordered_filtered_df.tail(10)[st.session_state["review_text_column"]]))
                                 no_of_rows = len(ordered_filtered_df)
                                 if no_of_rows==0:
                                     placeholder_dataframe_rows.write("No Related Data Found")

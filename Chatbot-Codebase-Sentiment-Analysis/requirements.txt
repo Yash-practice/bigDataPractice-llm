@@ -11,7 +11,6 @@ nltk==3.9.1
 rake_nltk==1.0.6
 langchain_text_splitters==0.2.2
 openai-whisper==20231117
-faiss-cpu
-langchain_community
-ctransformers
-langchain-community
+faiss-cpu==1.8.0.post1
+langchain_community==0.2.16
+ctransformers==0.2.27
