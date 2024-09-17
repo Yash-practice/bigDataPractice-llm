@@ -4,3 +4,11 @@ Chatbot-Codebase-Sentiment-Analysis/models/__pycache__
 Chatbot-Codebase-Sentiment-Analysis/models/roberta-base-go_emotions
 Chatbot-Codebase-Sentiment-Analysis/models/twitter-roberta-base-sentiment-latest
 Chatbot-Codebase-Sentiment-Analysis/Sentiment_Analysis_env
+
+Chatbot-Codebase-Doc/myenv
+
+Chatbot-Codebase-Doc/models/*
+
+Chatbot-Codebase-Doc/.env
+
+!Chatbot-Codebase-Doc/models/script.txt
