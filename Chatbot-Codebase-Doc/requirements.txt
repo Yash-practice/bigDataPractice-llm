@@ -1,4 +1,4 @@
-langchain==0.0.225
+langchain==0.0.343
 ctransformers==0.2.5
 sentence-transformers==2.2.2
 streamlit == 1.36.0
@@ -7,3 +7,5 @@ faiss-cpu
 ctransformers[cuda]
 googletrans==4.0.0rc1
 torch==2.2.0
+langchain-ibm==0.0.1
+langchain-core==0.0.13
