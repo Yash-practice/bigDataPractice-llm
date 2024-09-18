@@ -1,5 +1,6 @@
 #Script to download git files and models
 #!/bin/bash
+# sed -i 's/\r//' script.sh
 # Print the current date and time
 echo "Starting script at $(date)"
 # Create the directory if it does not exist
