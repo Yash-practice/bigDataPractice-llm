@@ -1,3 +1,4 @@
+from constants import model_constant
 from tqdm.auto import tqdm
 from module.Sentence_Extraction import Sentence_Extractor
 from models import model
@@ -41,7 +42,7 @@ def get_extended_dataframe(reviews_df, column_name):
 def get_analysis(df, domain_name):
     df.reset_index(inplace=True)
     model_name = model.domain_model[domain_name][0]
-    tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
+    tokenizer, model_instance = model.load_roberta_model(f'{model_name}/model', f'{model_name}/tokenizer')
     mapping = model_instance.config.id2label
     res = {}
     for _, row in tqdm(df.iterrows(), total=len(df)):
@@ -72,7 +73,7 @@ def index_creation(df):
 
 def create_vector_store(df,faiss_index):
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-    embeddings = HuggingFaceEmbeddings(model_name='models/all-MiniLM-L6-v2', model_kwargs={'device': device})
+    embeddings = HuggingFaceEmbeddings(model_name=model_constant.SENTENCE_TRANSFORMER, model_kwargs={'device': device})
     index_to_docstore_id = {index: str(uuid.uuid4()) for index, row in df.iterrows()}
     documents = {}
     for index, row in df.iterrows():
@@ -97,7 +98,7 @@ def create_prompt():
     return prompt
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-model_path = "models/llama-2-7b-chat.ggmlv3.q4_0.bin"
+model_path = model_constant.CONVERSATION_MODEL
 llm = CTransformers(model=model_path, model_type="llama", config={'max_new_tokens': 512, 'temperature': 0.6}, gpu_layers=50, device=device)
  
 def dataset_analysis(domain_name):
@@ -126,7 +127,7 @@ def dataset_analysis(domain_name):
                         placeholder.write("Analyzing Dataset")
                     model_name = model.domain_model[domain_name][0]
                     if model_name:
-                        tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
+                        tokenizer, model_instance = model.load_roberta_model(f'{model_name}/model', f'{model_name}/tokenizer')
                         sentiment_mapping = model_instance.config.id2label
                         res = []
                         for _, row in tqdm(df.iterrows(), total=len(df)):

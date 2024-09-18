@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['compute', 'instances', 'start', 'vm-genai-llm', '--zone', 'us-central1-a']
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['compute', 'ssh', 'vm-genai-llm', '--zone', 'us-central1-a', '--command', 'bash /root/script.sh']
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['compute', 'ssh', 'vm-genai-llm', '--zone', 'us-central1-a', '--command', 'bash /root/Doc_Chatbot/bigDataPractice-llm/Chatbot-Codebase-Sentiment-Analysis/script.sh']
+
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   args: ['compute', 'instances', 'stop', 'vm-genai-llm', '--zone', 'us-central1-a']

@@ -44,7 +44,7 @@ def main(domain_name):
 
     with col2:
         model_name = model.domain_model[domain_name][0]
-        tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
+        tokenizer, model_instance = model.load_roberta_model(f'{model_name}/model', f'{model_name}/tokenizer')
         sentiment_mapping = model_instance.config.id2label
 
         uploaded_files = st.file_uploader("Choose audio files", type=["wav", "mp3", "m4a", "flac", "ogg"], accept_multiple_files=True)

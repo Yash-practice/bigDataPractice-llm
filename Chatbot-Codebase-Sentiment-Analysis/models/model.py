@@ -49,7 +49,7 @@ def predict_sentiment(text, model, tokenizer, sentiment_mapping):
 
 @st.cache_data(show_spinner=False)  
 def load_minilm_embedding_model():
-    embedding_model = SentenceTransformer("models/all-MiniLM-L6-v2")
+    embedding_model = SentenceTransformer(model_constant.SENTENCE_TRANSFORMER)
     return embedding_model
     
 def encode_text(embedding_model,text):

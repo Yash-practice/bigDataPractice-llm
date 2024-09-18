@@ -49,7 +49,7 @@ def general_search(domain_name):
             model_name = model.domain_model[domain_name][0]
             
             if user_input and model_name:
-                tokenizer, model_instance = model.load_roberta_model(f'models/{model_name}/model', f'models/{model_name}/tokenizer')
+                tokenizer, model_instance = model.load_roberta_model(f'{model_name}/model', f'{model_name}/tokenizer')
                 sentiment_mapping = model_instance.config.id2label
                 sentiment = model.predict_sentiment(user_input, model_instance, tokenizer, sentiment_mapping)
                 response = f"{sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%" 
