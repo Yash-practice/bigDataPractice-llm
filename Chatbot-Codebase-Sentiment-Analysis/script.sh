@@ -30,7 +30,7 @@ fi
 # gcloud compute ssh vm-genai-llm --zone=us-central1-a
 pwd
 ls -lrt
-cd /root/Doc_Chatbot/bigDataPractice-llm/Chatbot-Codebase-Sentiment-Analysis/
+cd /root/Chatbots/bigDataPractice-llm/Chatbot-Codebase-Sentiment-Analysis/
 pwd
 ls -lrt
 
