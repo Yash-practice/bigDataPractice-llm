@@ -15,9 +15,9 @@ cd "$TARGET_DIR"
 # Fetch updates from the repository
 git fetch
 # Checkout the specific branch
-git checkout test-branch-1
+git checkout develop-build
 # Pull the latest changes from the branch
-git pull origin test-branch-1
+git pull origin develop-build
 # Copy the model to relevant folder 
 cd /root/Chatbots/bigDataPractice-llm
 gsutil cp -r gs://models_store/ .
