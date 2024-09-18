@@ -7,6 +7,20 @@ conjunctions = ["but", "however", "although", "otherwise"]
 
 pattern = r'\s*\b(?:' + '|'.join(conjunctions) + r')\b\s*'
 
+def split_review_text_to_rows(row, column_name):
+    split_texts = extract_sentences(row[column_name])
+    rows = []
+    for text in split_texts:
+        rows.append({
+            'Reviewer_ID': row['Review_ID'],
+            'Reviewer_Location': row['Reviewer_Location'],
+            'Review_Text': text,
+            'Year_Month': row['Year_Month'],
+            'Disneyland Branch': row['Branch'],
+            'Reviewer_Rating': row['Rating']
+        })
+    return rows
+
 def extract_sentences(text):
     # Split the text into sentences
     doc = nlp(text)
