@@ -3,6 +3,7 @@ from models import model
 from module.keywords import keywords
 from module.randomized_color import randomized_colors
 from module.Sentence_Extraction import Sentence_Extractor
+import json
 
 def main(domain_name=""):
     # Initialize chat history in session state
@@ -20,6 +21,11 @@ def main(domain_name=""):
     with col1:
         st.write("")
 
+    chat_history = []
+    
+    with open('chat_history.json', 'r') as file:
+        chat_history = json.load(file)
+        
     # Email body input and analysis
     with col2:
         # Input field for email body with auto-resize based on input length
@@ -40,9 +46,9 @@ def main(domain_name=""):
             sentiment = model.predict_sentiment(email_body, model_instance, tokenizer, sentiment_mapping)
             
             categorized_sentiment = sentiment['output']
-
-            st.write("Sentiment Analysis:")
-            st.write(f"Sentiment: {categorized_sentiment} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
+            response = f"{categorized_sentiment} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%"
+            st.write(f"{model.domain_model[domain_name][1]} Analysis:")
+            st.write(response)
 
             # Extract topics from the email body
             topics = keywords.keywords_extractor(email_body)
@@ -72,20 +78,36 @@ def main(domain_name=""):
                     for sentence in sentences:
                         st.write(sentence)
                         sentiment = model.predict_sentiment(sentence, model_instance, tokenizer, sentiment_mapping)
-                        st.write(f"Sentiment : {sentiment['output']} sentiment with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
-                            
-            # Add the email body, sentiment, and topics to chat history
-            st.session_state['chat_history'].append({
-                'email_body': email_body,
-                'sentiment': categorized_sentiment,
-                'topics': topics
-            })
+                        st.write(f"{model.domain_model[domain_name][1]} : {sentiment['output']} {model.domain_model[domain_name][1].lower()} with score of {sentiment['probs'][sentiment['output']]*100:.2f}%")
+        
+            json_chat = {
+                "data_type": "Email",
+                "analysis_type" : f"{domain_name}",
+                "value": f"{email_body}",
+                "keywords": topics,
+                "response": response
+            }
+                
+            if 'json_chat' in st.session_state:
+                if json_chat!=st.session_state['json_chat']:
+                    chat_history.append(json_chat)          
+                    with open('chat_history.json', 'w') as file:
+                        json.dump(chat_history, file)
+            else:
+                chat_history.append(json_chat)          
+                with open('chat_history.json', 'w') as file:
+                    json.dump(chat_history, file)
+            st.session_state['json_chat'] = json_chat                    
+            
 
-        # Display chat history
-        for chat in reversed(st.session_state['chat_history']):
-            st.markdown(f'<div class="chat-response">Email Body: {chat["email_body"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="chat-response">Sentiment: {chat["sentiment"]}</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="chat-response">Topics: {", ".join(chat["topics"])}</div>', unsafe_allow_html=True)
+        st.markdown(f'<h6>--------------------------------------------------------  Chat History  ---------------------------------------------------------</h6>', unsafe_allow_html=True)
+        for chat in reversed(chat_history):
+            if chat["data_type"]=="Email":
+                st.markdown(f'<div class="chat-response">User: {chat["value"]}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="chat-response">Bot: {chat["response"]}</div>', unsafe_allow_html=True)
+                if len(chat["keywords"])>0:
+                    st.markdown(f'<div class="chat-response">keywords: {",".join(chat["keywords"])}</div>', unsafe_allow_html=True)
+                st.markdown('<hr>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
