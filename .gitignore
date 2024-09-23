@@ -6,6 +6,7 @@ Chatbot-Codebase-Sentiment-Analysis/models/all-MiniLM-L6-v2
 Chatbot-Codebase-Sentiment-Analysis/models/roberta-base-go_emotions
 Chatbot-Codebase-Sentiment-Analysis/models/twitter-roberta-base-sentiment-latest
 Chatbot-Codebase-Sentiment-Analysis/models/llama-2-7b-chat.ggmlv3.q4_0.bin
+Chatbot-Codebase-Sentiment-Analysis/chat_history.json
 models_store/Chatbot-Codebase-Doc/**
 models_store/Chatbot-Codebase-Sentiment-Analysis/**
 !models_store/**/.gitkeep

@@ -14,6 +14,15 @@ usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_co
  
 if __name__ == "__main__":
     
+    file_path = 'chat_history.json'
+
+    # Check if the file exists
+    try:
+        with open(file_path, 'x') as f:
+            f.write('[]')
+    except FileExistsError:
+        print("File Aleady Exists")
+        
     st.set_page_config(layout="wide")
     
     # Load CSS
