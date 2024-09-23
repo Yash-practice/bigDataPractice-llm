@@ -21,7 +21,7 @@ if __name__ == "__main__":
         with open(file_path, 'x') as f:
             f.write('[]')
     except FileExistsError:
-        print("File Aleady Exists")
+        print("File Already Exists")
         
     st.set_page_config(layout="wide")
     
