@@ -367,20 +367,68 @@ def load_llm(model_path):
         print("Using Local LLM...")
         return llm
     
+def get_truncated_history(max_tokens=1000):
+    conversation = ""
+    token_count = 0
+    
+    # Reverse iterate over the history to include only the most recent parts
+    for message in reversed(st.session_state.messages):
+        history_tokens = len(message["content"].split())
+        # assistant_tokens = len(message['assistant'].split())
+        
+        # Stop appending if we are exceeding the token limit
+        if token_count + history_tokens > max_tokens:
+            break
+            
+        conversation = f"{message['role']} : {message['content']}\n" + conversation
+        token_count += history_tokens
+    
+    return conversation
+
+def generate_prompt(end_prompt: str, initial_prompt: str):
+    return f"""
+            {initial_prompt}\n
+            {end_prompt}""".strip()
 
 # Set custom prompt template
 def set_custom_prompt():
-    custom_prompt_template = """Use the following pieces of information to answer the user's question.
-    If you don't know the answer, just say that you don't know, don't try to make up an answer.
+    chat_history = get_truncated_history()
 
-    Context: {context}
-    Question: {question}
+    initial_prompt = f"""You are a helpful AI chat assistant with RAG capabilities. When a user asks you a question,
+            you will also be given context provided between <context> and </context> tags. Use that context
+            with the user's chat history provided in the between <chat_history> and </chat_history> tags
+            to provide a summary that addresses the user's question. Ensure the answer is coherent, concise,
+            and directly relevant to the user's question.
 
-    Only return the helpful answer below and nothing else.
-    Helpful answer:
-    """
-    prompt = PromptTemplate(template=custom_prompt_template, input_variables=['context', 'question'])
+            If the user asks a generic question which cannot be answered with the given context or chat_history,
+            just say "I don't know the answer to that question.
+
+            Don't saying things like "according to the provided context".
+
+            <chat_history>
+            {chat_history}
+            </chat_history>"""
+
+    end_prompt = """<context>
+        {context}
+        </context>
+        <question>
+        {question}
+        </question>
+        [/INST]
+        Answer:""".strip()
+
+    custom_prompt_template = generate_prompt(
+        end_prompt, initial_prompt
+    )
+    # print(custom_prompt_template)
+    
+    prompt = PromptTemplate(
+        template=custom_prompt_template, 
+        input_variables=['context', 'question']
+    )
     return prompt
+
 
 # Create RetrievalQA chain
 def retrieval_qa_chain(llm, prompt, db):
@@ -548,6 +596,7 @@ def generate_response(prompt_input, domain):
         english_response = faq_answer
         source_info = [faq_page]  # Use the stored page number
     else:
+        
         qa = qa_bot(st.session_state.vectorstore_path, llm_model_path)
         response = qa({'query': english_prompt})
         english_response = response["result"]
