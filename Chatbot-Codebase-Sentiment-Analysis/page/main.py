@@ -3,6 +3,7 @@ from page.general import general_page
 from page.dataset_analyser import dataset_analyser_page
 from page.audio_analysis import audio_page
 from page.email_analysis import email_analysis
+from page.video_analyser import video_analyser
 
 def page(usecase,domain_name):
     if usecase==usecase_constant.CHATBOT:
@@ -13,4 +14,6 @@ def page(usecase,domain_name):
         audio_page.main(domain_name)
     elif usecase==usecase_constant.EMAIL_ANALYSER:
         email_analysis.main(domain_name)
+    elif usecase==usecase_constant.VIDEO_ANALYSER:
+        video_analyser.main(domain_name)
     

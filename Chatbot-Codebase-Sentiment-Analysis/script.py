@@ -10,7 +10,7 @@ def load_css(file_path):
         
 domains = [analysis_type_constant.GENERAL, analysis_type_constant.SOCIAL_MEDIA]
 
-usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_constant.AUDIO_ANALYSER,usecase_constant.EMAIL_ANALYSER]
+usecase = [usecase_constant.CHATBOT,usecase_constant.DATASET_ANALYSER,usecase_constant.AUDIO_ANALYSER,usecase_constant.EMAIL_ANALYSER, usecase_constant.VIDEO_ANALYSER]
  
 if __name__ == "__main__":
     
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     except FileExistsError:
         print("File Already Exists")
         
-    st.set_page_config(layout="wide")
+    st.set_page_config(layout="wide",page_title="AI Analyser")
     
     # Load CSS
     css_file = 'css/style.css'

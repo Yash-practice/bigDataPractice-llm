@@ -29,9 +29,29 @@ def keywords_extractor(text):
     
     return keywords
 
-def highlight_keywords(text, keywords, color_type):
-    for keyword, color in keywords:
-        if keyword in text:
-            keyword = keyword.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            text = text.replace(keyword, f'<span style="{color_type}: {color};">{keyword}</span>')
-    return text
+def highlight_keywords(text, keywords_with_colors, color_type):
+    
+    if color_type=="color":
+        case_keywords = get_keywords_with_case(text, [keyword for keyword,color in keywords_with_colors])
+        for i in range(len(case_keywords)):
+            case_keywords[i] = (case_keywords[i] , keywords_with_colors[i][1])
+        keywords_with_colors = case_keywords
+    
+    pattern = r'(<[^>]*>)|(' + '|'.join(re.escape(keyword) for keyword, _ in keywords_with_colors) + r')'
+
+    def replacement(match):
+        if match.group(1):
+            return match.group(1)  # Return the original if it's inside < >
+        else:
+            # Get the matched keyword
+            keyword = match.group(2)
+            # Find the color associated with the keyword
+            for k, color in keywords_with_colors:
+                if k == keyword:
+                    return f'<span style="{color_type}: {color};">{keyword}</span>'
+            return keyword  # Fallback (should not reach here)
+
+    # Replace using a function to determine whether to highlight or not
+    highlighted_text = re.sub(pattern, replacement, text)
+    
+    return highlighted_text

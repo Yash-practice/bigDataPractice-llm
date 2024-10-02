@@ -5,6 +5,8 @@ import numpy as np
 from scipy.special import softmax
 from sentence_transformers import SentenceTransformer
 import streamlit as st
+import torch
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
 
 domain_model = {
@@ -54,3 +56,30 @@ def load_minilm_embedding_model():
     
 def encode_text(embedding_model,text):
     return embedding_model.encode(text)
+
+@st.cache_data(show_spinner=False)
+def create_speech_recognition_pipeline():
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+    
+    # model_id = "openai/whisper-large-v3"
+    model_name = "../models_store/Chatbot-Codebase-Sentiment-Analysis/whisper-large-v3/model"
+    processor_name = "../models_store/Chatbot-Codebase-Sentiment-Analysis/whisper-large-v3/preprocessor"
+
+    model = AutoModelForSpeechSeq2Seq.from_pretrained(
+        model_name, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
+    )
+    model.to(device)
+
+    processor = AutoProcessor.from_pretrained(processor_name)
+
+    pipe = pipeline(
+        "automatic-speech-recognition",
+        model=model,
+        tokenizer=processor.tokenizer,
+        feature_extractor=processor.feature_extractor,
+        torch_dtype=torch_dtype,
+        device=device,
+    )
+    
+    return pipe
